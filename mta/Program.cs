@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using mta.Middleware;
 using mta.Models;
+using Services;
 using Services.ProductService;
-using Services.TenantService;
 
 var builder = WebApplication.CreateBuilder(args);
 
