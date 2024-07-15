@@ -1,4 +1,4 @@
-﻿using mta.Services;
+﻿using Services.TenantService;
 
 namespace mta.Middleware
 {
@@ -13,7 +13,7 @@ namespace mta.Middleware
 
         public async Task InvokeAsync(HttpContext context, ICurrentTenantService currentTenantService)
         {
-            context.Request.Headers.TryGetValue("tenant", out var tenantFromHeader);
+            context.Request.Headers.TryGetValue("X-Tenant", out var tenantFromHeader);
             if (string.IsNullOrEmpty(tenantFromHeader) == false)
             {
                await currentTenantService.SetTenant(tenantFromHeader);

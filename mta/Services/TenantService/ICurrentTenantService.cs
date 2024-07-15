@@ -1,4 +1,4 @@
-﻿namespace mta.Services
+﻿namespace Services.TenantService
 {
     public interface ICurrentTenantService
     {

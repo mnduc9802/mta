@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using mta.Services.DTOs;
-using mta.Services;
+using Services.ProductService;
 
 namespace mta.Controllers
 {

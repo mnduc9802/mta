@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using mta.Models;
 
-namespace mta.Services
+namespace Services.TenantService
 {
     public class CurrentTenantService : ICurrentTenantService
     {
@@ -24,7 +24,7 @@ namespace mta.Services
             else
             {
                 throw new Exception("Tenant invalid");
-            }    
+            }
         }
     }
 }

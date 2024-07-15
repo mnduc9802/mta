@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using mta.Services;
+using Services.TenantService;
 
 namespace mta.Models
 {

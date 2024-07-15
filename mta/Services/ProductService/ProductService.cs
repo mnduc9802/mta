@@ -1,7 +1,8 @@
 ﻿using mta.Models;
 using mta.Services.DTOs;
+using Services.TenantService;
 
-namespace mta.Services
+namespace Services.ProductService
 {
     public class ProductService : IProductService
     {

@@ -1,7 +1,7 @@
 ﻿using mta.Models;
 using mta.Services.DTOs;
 
-namespace mta.Services
+namespace Services.ProductService
 {
     public interface IProductService
     {
