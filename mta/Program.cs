@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using mta.Middleware;
 using mta.Models;
+using mta.Services.TenantService;
 using Services;
 using Services.ProductService;
 
@@ -11,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<IProductService, ProductService>();
+
+//Current tenant service with scoped lifetime (created per each request)
 builder.Services.AddScoped<ICurrentTenantService, CurrentTenantService>();
 
 // Configure PostgreSQL connection
@@ -19,6 +21,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<TenantDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//Product CRUD service with transient lifetime
+builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<ITenantService, TenantService>();
 
 var app = builder.Build();
 
