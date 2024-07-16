@@ -1,6 +1,8 @@
-﻿using mta.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using mta.Models;
 using mta.Services.DTOs;
-using Services.TenantService;
 
 namespace Services.ProductService
 {
@@ -17,8 +19,14 @@ namespace Services.ProductService
 
         public IEnumerable<Product> GetAllProducts()
         {
-            var products = _context.Products.ToList();
-            return products;
+            if (string.IsNullOrEmpty(_currentTenantService.TenantId))
+            {
+                throw new InvalidOperationException("Current tenant ID is not set.");
+            }
+
+            return _context.Products
+                            .Where(p => p.TenantId == _currentTenantService.TenantId)
+                            .ToList();
         }
 
         public Product CreateProduct(CreateProductRequest request)
@@ -35,7 +43,7 @@ namespace Services.ProductService
                 TenantId = _currentTenantService.TenantId
             };
 
-            _context.Add(product);
+            _context.Products.Add(product);
             _context.SaveChanges();
 
             return product;
@@ -43,11 +51,18 @@ namespace Services.ProductService
 
         public bool DeleteProduct(int id)
         {
-            var product = _context.Products.Where(x => x.Id == id).FirstOrDefault();
+            if (string.IsNullOrEmpty(_currentTenantService.TenantId))
+            {
+                throw new InvalidOperationException("Current tenant ID is not set.");
+            }
+
+            var product = _context.Products
+                                   .Where(p => p.Id == id && p.TenantId == _currentTenantService.TenantId)
+                                   .FirstOrDefault();
 
             if (product != null)
             {
-                _context.Remove(product);
+                _context.Products.Remove(product);
                 _context.SaveChanges();
                 return true;
             }

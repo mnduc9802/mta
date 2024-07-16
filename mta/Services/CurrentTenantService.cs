@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using mta.Models;
 
-namespace Services.TenantService
+namespace Services
 {
     public class CurrentTenantService : ICurrentTenantService
     {
@@ -11,11 +12,15 @@ namespace Services.TenantService
         {
             _context = context;
         }
+
+        // Phải có getter và setter công khai
         public string? TenantId { get; set; }
 
-        public async Task<bool> SetTenant(string tenant)
+        public async Task<bool> SetTenant(string tenantId)
         {
-            var tenantInfo = await _context.Tenants.Where(x => x.Id == tenant).FirstOrDefaultAsync();
+            var tenantInfo = await _context.Tenants
+                                            .Where(x => x.Id == tenantId)
+                                            .FirstOrDefaultAsync();
             if (tenantInfo != null)
             {
                 TenantId = tenantInfo.Id;
@@ -23,7 +28,17 @@ namespace Services.TenantService
             }
             else
             {
-                throw new Exception("Tenant invalid");
+                // Tạo và lưu tenant mới nếu không tồn tại
+                tenantInfo = new Tenant
+                {
+                    Id = tenantId,
+                    Name = tenantId // hoặc tên khác nếu bạn muốn
+                };
+                _context.Tenants.Add(tenantInfo);
+                await _context.SaveChangesAsync();
+
+                TenantId = tenantInfo.Id;
+                return true;
             }
         }
     }

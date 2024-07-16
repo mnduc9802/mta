@@ -1,4 +1,4 @@
-﻿using Services.TenantService;
+﻿using Services;
 
 namespace mta.Middleware
 {
