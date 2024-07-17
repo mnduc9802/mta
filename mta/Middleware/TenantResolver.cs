@@ -1,4 +1,5 @@
-﻿using Services;
+﻿using Microsoft.AspNetCore.Http;
+using Services;
 
 namespace mta.Middleware
 {
@@ -13,12 +14,12 @@ namespace mta.Middleware
 
         public async Task InvokeAsync(HttpContext context, ICurrentTenantService currentTenantService)
         {
-            context.Request.Headers.TryGetValue("X-Tenant", out var tenantFromHeader);
-            if (string.IsNullOrEmpty(tenantFromHeader) == false)
+            if (context.Request.Headers.TryGetValue("X-Tenant", out var tenantFromHeader))
             {
-               await currentTenantService.SetTenant(tenantFromHeader);
-            } 
-            await _next(context);    
+                await currentTenantService.SetTenant(tenantFromHeader);
+            }
+
+            await _next(context);
         }
     }
 }

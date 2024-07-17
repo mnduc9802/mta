@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using mta.Models;
+using Services;
+using System.Threading.Tasks;
 
-namespace Services
+namespace mta.Services
 {
     public class CurrentTenantService : ICurrentTenantService
     {
@@ -13,33 +14,37 @@ namespace Services
             _context = context;
         }
 
-        // Phải có getter và setter công khai
-        public string? TenantId { get; set; }
-
-        public async Task<bool> SetTenant(string tenantId)
+        public async Task<bool> SetTenant(string tenantName)
         {
-            var tenantInfo = await _context.Tenants
-                                            .Where(x => x.Id == tenantId)
-                                            .FirstOrDefaultAsync();
+            var tenantInfo = await _context.Tenants.FirstOrDefaultAsync(x => x.Name == tenantName);
             if (tenantInfo != null)
             {
-                TenantId = tenantInfo.Id;
+                TenantId = tenantInfo.Id.ToString();
                 return true;
             }
             else
             {
-                // Tạo và lưu tenant mới nếu không tồn tại
-                tenantInfo = new Tenant
-                {
-                    Id = tenantId,
-                    Name = tenantId // hoặc tên khác nếu bạn muốn
-                };
-                _context.Tenants.Add(tenantInfo);
-                await _context.SaveChangesAsync();
+                // Tạo mới tenant với GUID cho Id
+                var newTenantId = Guid.NewGuid().ToString();
+                TenantId = newTenantId;
 
-                TenantId = tenantInfo.Id;
+                // Thêm tenant vào cơ sở dữ liệu chung
+                var newTenant = new Tenant
+                {
+                    Id = newTenantId,
+                    Name = tenantName,
+                };
+                await AddTenantIfNotExists(newTenant);
                 return true;
             }
         }
+
+        private async Task AddTenantIfNotExists(Tenant newTenant)
+        {
+            _context.Tenants.Add(newTenant);
+            await _context.SaveChangesAsync();
+        }
+
+        public string? TenantId { get; set; }
     }
 }

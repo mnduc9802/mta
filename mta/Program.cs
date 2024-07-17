@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using mta.Middleware;
 using mta.Models;
+using mta.Services;
 using mta.Services.TenantService;
 using Services;
 using Services.ProductService;
